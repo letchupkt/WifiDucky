@@ -8,11 +8,17 @@ WiFi Ducky is a **wireless keystroke injection tool** that emulates a **USB Rubb
 ---
 ## **Features**
 ✅ **Remote Keystroke Injection** – Send payloads wirelessly to a connected device.
+
 ✅ **Ducky Script Support** – Execute pre-written Rubber Ducky scripts.
+
 ✅ **Web-Based Interface** – Simple UI for scripting and execution.
+
 ✅ **File Upload Support** – Run scripts from text files.
+
 ✅ **Cost-Effective** – Uses a single **Raspberry Pi Pico W** (~$6).
+
 ✅ **Hacker-Themed UI** – A dark, hacker-style interface for an immersive experience.
+
 
 ---
 ## **Getting Started**
