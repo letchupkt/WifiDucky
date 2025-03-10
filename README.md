@@ -52,7 +52,8 @@ WiFi Ducky is a **wireless keystroke injection tool** that emulates a **USB Rubb
 5️⃣ Click **RUN** to execute the script.
 
 
-![Web Interface](https://gcdnb.pbrd.co/images/Qrj5szwW56B3.jpg?o=1)
+![Web Interface](https://github.com/user-attachments/assets/51c25369-f8c1-4a74-b633-7f8bf8a44b0e)
+
 
 ---
 ## **Common Rubber Ducky Commands**
