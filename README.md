@@ -39,8 +39,6 @@ WiFi Ducky is a **wireless keystroke injection tool** that emulates a **USB Rubb
 2. Extract the files.
 3. Copy all files into the **CIRCUITPY** drive.
 
-![File Copy](https://gcdnb.pbrd.co/images/WuZOVmyUAWF4.jpg?o=1)
-
 ---
 ## **How to Use**
 1️⃣ Connect the **Raspberry Pi Pico W** to the target system via USB.
