@@ -42,10 +42,15 @@ WiFi Ducky is a **wireless keystroke injection tool** that emulates a **USB Rubb
 ---
 ## **How to Use**
 1️⃣ Connect the **Raspberry Pi Pico W** to the target system via USB.
+
 2️⃣ Connect to the **WiFi network** created by the Pico (**SSID:** WiFi Duck | **Password:** password).
+
 3️⃣ Open a web browser and navigate to [192.168.4.1](http://192.168.4.1).
+
 4️⃣ Write or upload a **Ducky Script** in the editor.
+
 5️⃣ Click **RUN** to execute the script.
+
 
 ![Web Interface](https://gcdnb.pbrd.co/images/Qrj5szwW56B3.jpg?o=1)
 
