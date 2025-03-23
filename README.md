@@ -35,7 +35,7 @@ WiFi Ducky is a **wireless keystroke injection tool** that emulates a **USB Rubb
 4. Copy the **.uf2** file onto the drive. The device will reboot as **CIRCUITPY**.
 
 #### **Step 2: Install Pico WiFi Duck Files**
-1. Download the latest **release zip** from [here](https://github.com/letchupkt/wifi-ducky).
+1. Download the latest **release zip** from [here](https://github.com/letchupkt/wifi-ducky/archive/refs/tags/wifi-ducky-v1.zip)
 2. Extract the files.
 3. Copy all files into the **CIRCUITPY** drive.
 
