@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Ducky</title>
+    <style>
+        :root {
+            --primary: #00ff00;
+            --primary-dark: #15d400;
+            --bg: #000;
+            --card-bg: #111;
+            --text: #00ff00;
+            --text-dim: #008800;
+            --border: #003300;
+            --warning: #ffaa00;
+            --error: #ff0000;
+        }
+        
+        body {
+            font-family: "Courier New", monospace;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+        }
+        
+        .card.hidden {
+            display: none;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-top: 0;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+        
+        h1 {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        textarea, input, select {
+            width: 100%;
+            background: var(--bg);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 10px;
+            margin: 5px 0;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        }
+        
+        button {
+            background: var(--primary);
+            color: var(--bg);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin: 5px 5px 5px 0;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        button.warning {
+            background: var(--warning);
+            color: var(--bg);
+        }
+        
+        button.warning:hover {
+            background: #cc8800;
+        }
+        
+        button.danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        button.danger:hover {
+            background: #cc0000;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-group button {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-buttons button {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .nav-buttons button.active {
+            background: var(--primary-dark);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--text-dim);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: var(--primary-dark);
+        }
+        
+        .toggle-switch.active::before {
+            left: 33px;
+            background: var(--bg);
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            display: none;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            display: block;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            display: block;
+        }
+        
+        .status.warning {
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            display: block;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-weight: bold;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .info-panel {
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 3px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .command-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .command-item {
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 3px solid var(--primary);
+            padding: 10px;
+        }
+        
+        .command-item b {
+            color: var(--primary);
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff0000;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.connected {
+            background: var(--primary);
+            animation: none;
+        }
+
+        .badusb-status {
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 3px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px dashed var(--primary);
+            display: none;
+        }
+        
+        .badusb-status.active {
+            display: block;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .command-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-buttons button {
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>WiFi Ducky</h1>
+            
+            <div class="connection-status">
+                <div id="connectionIndicator" class="status-indicator connected"></div>
+                <span id="connectionText">Connected to WiFi Ducky</span>
+            </div>
+            
+            <div class="nav-buttons">
+                <button id="navPayload" class="active" onclick="switchTab('payload')">Payload Editor</button>
+                <button id="navSettings" onclick="switchTab('settings')">Settings</button>
+                <button id="navReference" onclick="switchTab('reference')">Reference</button>
+            </div>
+        </div>
+        
+        <!-- Payload Editor Tab -->
+        <div id="payloadTab" class="card">
+            <h2>Payload Editor</h2>
+            
+            <select id="templateSelect">
+                <option value="">-- Select Template --</option>
+                <option value="STRING Hello World!">Basic Hello World</option>
+                <option value="GUI r\nSTRING cmd\nENTER\nSTRING ipconfig\nENTER">Get IP Config (Windows)</option>
+                <option value="GUI r\nSTRING powershell\nENTER\nSTRING Start-Process cmd -Verb runAs\nENTER">Admin Shell (Windows)</option>
+                <option value="CTRL ALT DEL">Lock Screen</option>
+                <option value="GUI d">Show Desktop</option>
+                <option value="GUI l">Lock Workstation</option>
+                <option value="STRING echo 'Hello from WiFi Ducky!'\nENTER">Basic Terminal Command</option>
+            </select>
+            
+            <textarea id="payload" rows="10" placeholder="Enter your Ducky Script here..."></textarea>
+            
+            <div class="btn-group">
+                <button onclick="executeScript()">Execute Script</button>
+                <button onclick="document.getElementById('fileInput').click()">Load from File</button>
+                <input type="file" id="fileInput" accept=".txt,.ducky" style="display: none;">
+            </div>
+            
+            <div id="statusMessage" class="status"></div>
+            
+            <div class="toggle-container">
+                <span>BadUSB Mode (Auto-execute when connected)</span>
+                <div id="badUSBMode" class="toggle-switch"></div>
+            </div>
+            
+            <div id="badusbStatus" class="badusb-status">
+                BadUSB Mode: Waiting for device connection...
+            </div>
+        </div>
+        
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="card hidden">
+            <h2>Device Settings</h2>
+            
+            <div class="info-panel">
+                <strong>Current Status:</strong>
+                <div id="deviceStatus">Loading...</div>
+            </div>
+            
+            <h3>WiFi Access Point Settings</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newSSID">Network Name (SSID):</label>
+                    <input type="text" id="newSSID" maxlength="32" placeholder="Enter SSID">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newPassword">Password:</label>
+                    <input type="password" id="newPassword" maxlength="63" placeholder="Enter password (8-63 characters)">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" id="confirmPassword" maxlength="63" placeholder="Confirm password">
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="saveSettings()">Save Settings</button>
+                <button onclick="loadCurrentSettings()">Reload Current</button>
+            </div>
+            
+            <div id="settingsStatus" class="status"></div>
+            
+            <h3>Device Management</h3>
+            
+            <div class="btn-group">
+                <button class="warning" onclick="restartWiFi()">Restart WiFi</button>
+                <button class="danger" onclick="factoryReset()">Factory Reset</button>
+            </div>
+            
+            <div class="info-panel">
+                <strong>Note:</strong> After changing WiFi settings, you'll need to reconnect to the new network name with the new password.
+            </div>
+        </div>
+        
+        <!-- Reference Tab -->
+        <div id="referenceTab" class="card hidden">
+            <h2>Ducky Script Reference</h2>
+            <p>Common commands for your Rubber Ducky scripts:</p>
+            
+            <div class="command-list">
+                <div class="command-item">
+                    <b>DELAY 500</b> - Waits 500 milliseconds before next command.
+                </div>
+                <div class="command-item">
+                    <b>STRING text</b> - Types the specified text.
+                </div>
+                <div class="command-item">
+                    <b>ENTER</b> - Simulates pressing the Enter key.
+                </div>
+                <div class="command-item">
+                    <b>GUI r</b> - Opens the Run dialog (Windows key + R).
+                </div>
+                <div class="command-item">
+                    <b>CTRL ALT DEL</b> - Opens security options.
+                </div>
+                <div class="command-item">
+                    <b>CTRL SHIFT ESC</b> - Opens Task Manager.
+                </div>
+                <div class="command-item">
+                    <b>ALT F4</b> - Closes active window.
+                </div>
+                <div class="command-item">
+                    <b>REPEAT</b> - Repeats the last command.
+                </div>
+                <div class="command-item">
+                    <b>REM comment</b> - Adds a comment (not executed).
+                </div>
+                <div class="command-item">
+                    <b>DEFAULT_DELAY X</b> - Sets default delay between commands.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; <span id="currentYear"></span> LetchuPkt | 
+        <a href="https://github.com/letchupkt" target="_blank">GitHub</a> |
+        <a href="https://linkedin.com/in/lakshmikanthank" target="_blank">LinkedIn</a> |
+        <a href="https://instagram.com/letchu_pkt" target="_blank">Instagram</a>
+    </footer>
+
+    <script>
+        const DEVICE_IP = window.location.origin;
+        let isConnected = true;
+        let badUSBMode = false;
+        let badUSBScript = "";
+        let connectionCheckInterval;
+        let executionAttempts = 0;
+        const MAX_ATTEMPTS = 5;
+        let currentTab = 'payload';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("currentYear").textContent = new Date().getFullYear();
+            
+            // Load settings from localStorage
+            if (localStorage.getItem('badUSBMode') === 'true') {
+                toggleBadUSBMode(true);
+            }
+            if (localStorage.getItem('badUSBScript')) {
+                document.getElementById("payload").value = localStorage.getItem('badUSBScript');
+            }
+            
+            // Set up event listeners
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            document.getElementById('templateSelect').addEventListener('change', handleTemplateSelect);
+            document.getElementById('badUSBMode').addEventListener('click', function() {
+                toggleBadUSBMode();
+            });
+            
+            // Load current settings
+            loadCurrentSettings();
+            updateDeviceStatus();
+            
+            // Start connection check if in BadUSB mode
+            if (badUSBMode) {
+                startConnectionCheck();
+            }
+        });
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.getElementById('payloadTab').classList.add('hidden');
+            document.getElementById('settingsTab').classList.add('hidden');
+            document.getElementById('referenceTab').classList.add('hidden');
+            
+            // Remove active class from all nav buttons
+            document.getElementById('navPayload').classList.remove('active');
+            document.getElementById('navSettings').classList.remove('active');
+            document.getElementById('navReference').classList.remove('active');
+            
+            // Show selected tab
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            
+            currentTab = tab;
+            
+            // Load data when switching to settings
+            if (tab === 'settings') {
+                loadCurrentSettings();
+                updateDeviceStatus();
+            }
+        }
+
+        function loadCurrentSettings() {
+            fetch(`${DEVICE_IP}/config/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('newSSID').value = data.config.ssid;
+                        // Don't load the masked password, keep field empty for security
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmPassword').value = '';
+                        showSettingsStatus('Settings loaded successfully', 'success');
+                    } else {
+                        throw new Error(data.message || 'Unknown error from server');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading settings:', error);
+                    showSettingsStatus(`Error loading settings: ${error.message}`, 'error');
+                    // Set fallback values
+                    document.getElementById('newSSID').value = 'WIFI DUCK';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                });
+        }
+
+        function updateDeviceStatus() {
+            fetch(`${DEVICE_IP}/status/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'online' || data.status === 'success') {
+                        const uptime = Math.floor((data.uptime || 0) / 60);
+                        const status = `
+                            SSID: ${data.current_ssid || 'Unknown'}<br>
+                            Uptime: ${uptime} minutes<br>
+                            Executions: ${data.executions || 0}<br>
+                            WiFi Status: ${data.wifi_status || 'Unknown'}<br>
+                            IP Address: ${data.ip_address || 'Unknown'}<br>
+                            Free Memory: ${data.free_memory ? Math.floor(data.free_memory / 1024) + ' KB' : 'Unknown'}
+                        `;
+                        document.getElementById('deviceStatus').innerHTML = status;
+                    } else {
+                        throw new Error(data.message || 'Status request failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading device status:', error);
+                    document.getElementById('deviceStatus').innerHTML = `
+                        <span style="color: #ff0000;">Error: ${error.message}</span><br>
+                        <span style="color: #888;">Unable to connect to device</span>
+                    `;
+                });
+        }
+
+        function saveSettings() {
+            const ssid = document.getElementById('newSSID').value.trim();
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (!ssid) {
+                showSettingsStatus('SSID cannot be empty', 'error');
+                return;
+            }
+            
+            if (ssid.length > 32) {
+                showSettingsStatus('SSID cannot be longer than 32 characters', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showSettingsStatus('Password cannot be empty', 'error');
+                return;
+            }
+            
+            if (password.length < 8 || password.length > 63) {
+                showSettingsStatus('Password must be 8-63 characters long', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showSettingsStatus('Passwords do not match', 'error');
+                return;
+            }
+            
+            // Save settings
+            const config = {
+                ssid: ssid,
+                password: password
+            };
+            
+            showSettingsStatus('Saving settings...', 'warning');
+            
+            fetch(`${DEVICE_IP}/config/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ config: config })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showSettingsStatus(data.message, 'success');
+                    
+                    if (data.wifi_restart_required) {
+                        showSettingsStatus('WiFi settings changed. Use "Restart WiFi" button to apply changes.', 'warning');
+                    }
+                    
+                    // Clear password fields for security
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    
+                    // Update device status
+                    setTimeout(updateDeviceStatus, 1000);
+                } else {
+                    showSettingsStatus(data.message || 'Failed to save settings', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving settings:', error);
+                showSettingsStatus(`Error saving settings: ${error.message}`, 'error');
+            });
+        }
+
+        function restartWiFi() {
+            if (!confirm('Restart WiFi? You will need to reconnect to the new network if you changed the SSID.')) {
+                return;
+            }
+            
+            showSettingsStatus('Restarting WiFi...', 'warning');
+            
+            fetch(`${DEVICE_IP}/restart/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showSettingsStatus(`WiFi restarted successfully! New SSID: ${data.new_ssid}`, 'success');
+                    
+                    // Show reconnection message
+                    setTimeout(() => {
+                        showSettingsStatus(`Please reconnect to "${data.new_ssid}" if the network name changed.`, 'warning');
+                    }, 3000);
+                    
+                    updateDeviceStatus();
+                } else {
+                    showSettingsStatus(data.message || 'Failed to restart WiFi', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error restarting WiFi:', error);
+                showSettingsStatus(`Error restarting WiFi: ${error.message}`, 'error');
+            });
+        }
+
+        function factoryReset() {
+            if (!confirm('Factory Reset? This will restore all settings to defaults and cannot be undone.')) {
+                return;
+            }
+            
+            if (!confirm('Are you sure? This action cannot be undone.')) {
+                return;
+            }
+            
+            showSettingsStatus('Performing factory reset...', 'warning');
+            
+            fetch(`${DEVICE_IP}/factory-reset/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showSettingsStatus('Factory reset completed! Device has been reset to defaults.', 'success');
+                    
+                    // Update form with reset values
+                    if (data.config) {
+                        document.getElementById('newSSID').value = data.config.ssid;
+                    }
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    
+                    updateDeviceStatus();
+                } else {
+                    showSettingsStatus(data.message || 'Factory reset failed', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error performing factory reset:', error);
+                showSettingsStatus(`Error performing factory reset: ${error.message}`, 'error');
+            });
+        }
+
+        function showSettingsStatus(message, type) {
+            const statusElement = document.getElementById("settingsStatus");
+            statusElement.textContent = message;
+            statusElement.className = "status " + type;
+            
+            setTimeout(() => {
+                statusElement.className = "status";
+                statusElement.textContent = "";
+            }, 8000);
+        }
+
+        // Original functions for payload execution
+        function toggleBadUSBMode(initialLoad = false) {
+            badUSBMode = !badUSBMode;
+            const toggle = document.getElementById('badUSBMode');
+            const status = document.getElementById('badusbStatus');
+            
+            toggle.classList.toggle('active', badUSBMode);
+            status.classList.toggle('active', badUSBMode);
+            
+            if (badUSBMode) {
+                badUSBScript = document.getElementById("payload").value.trim();
+                localStorage.setItem('badUSBScript', badUSBScript);
+                localStorage.setItem('badUSBMode', 'true');
+                status.textContent = "BadUSB Mode: Waiting for device connection...";
+                startConnectionCheck();
+                
+                if (!initialLoad) {
+                    showStatus("BadUSB Mode enabled - Script will auto-execute when device connects", "success");
+                }
+            } else {
+                localStorage.setItem('badUSBMode', 'false');
+                stopConnectionCheck();
+                status.textContent = "";
+                
+                if (!initialLoad) {
+                    showStatus("BadUSB Mode disabled", "success");
+                }
+            }
+        }
+
+        function startConnectionCheck() {
+            stopConnectionCheck();
+            executionAttempts = 0;
+            connectionCheckInterval = setInterval(checkDeviceConnection, 3000);
+        }
+
+        function stopConnectionCheck() {
+            if (connectionCheckInterval) {
+                clearInterval(connectionCheckInterval);
+                connectionCheckInterval = null;
+            }
+        }
+
+        function checkDeviceConnection() {
+            if (!badUSBMode || executionAttempts >= MAX_ATTEMPTS) {
+                stopConnectionCheck();
+                return;
+            }
+            
+            const status = document.getElementById('badusbStatus');
+            
+            fetch(`${DEVICE_IP}/`, { method: 'GET' })
+                .then(() => {
+                    status.textContent = "BadUSB Mode: Device connected, executing script...";
+                    executeBadUSBScript();
+                })
+                .catch(() => {
+                    executionAttempts++;
+                    status.textContent = `BadUSB Mode: Waiting for device connection... (Attempt ${executionAttempts}/${MAX_ATTEMPTS})`;
+                    
+                    if (executionAttempts >= MAX_ATTEMPTS) {
+                        status.textContent = "BadUSB Mode: Max connection attempts reached. Disabling...";
+                        setTimeout(() => {
+                            toggleBadUSBMode();
+                        }, 3000);
+                    }
+                });
+        }
+
+        function executeBadUSBScript() {
+            if (!badUSBScript) {
+                showStatus("Error: No script stored for BadUSB mode", "error");
+                return;
+            }
+            
+            fetch(`${DEVICE_IP}/api/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    content: badUSBScript
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Server responded with error");
+            })
+            .then(data => {
+                const status = document.getElementById('badusbStatus');
+                status.textContent = "BadUSB Mode: Script executed successfully!";
+                showStatus("BadUSB script executed automatically: " + data.message, "success");
+                
+                setTimeout(() => {
+                    toggleBadUSBMode();
+                }, 5000);
+            })
+            .catch(error => {
+                const status = document.getElementById('badusbStatus');
+                status.textContent = "BadUSB Mode: Execution failed. Retrying...";
+                console.error("BadUSB execution error:", error);
+                
+                setTimeout(() => {
+                    if (badUSBMode) {
+                        executeBadUSBScript();
+                    }
+                }, 3000);
+            });
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("payload").value = e.target.result;
+                
+                if (badUSBMode) {
+                    badUSBScript = e.target.result;
+                    localStorage.setItem('badUSBScript', badUSBScript);
+                    showStatus("Script updated for BadUSB mode", "success");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function handleTemplateSelect() {
+            const value = this.value;
+            if (value) {
+                document.getElementById("payload").value = value;
+                
+                if (badUSBMode) {
+                    badUSBScript = value;
+                    localStorage.setItem('badUSBScript', badUSBScript);
+                    showStatus("Template loaded for BadUSB mode", "success");
+                }
+            }
+        }
+
+        function executeScript() {
+            const payload = document.getElementById("payload").value.trim();
+            if (!payload) {
+                showStatus("Error: Payload is empty", "error");
+                return;
+            }
+            
+            showStatus("Executing script...", "success");
+            
+            fetch(`${DEVICE_IP}/api/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    content: payload
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Server responded with error");
+            })
+            .then(data => {
+                showStatus("Script executed successfully: " + data.message, "success");
+            })
+            .catch(error => {
+                showStatus("Error: " + error.message, "error");
+                console.error("Execution error:", error);
+            });
+        }
+
+        function showStatus(message, type) {
+            const statusElement = document.getElementById("statusMessage");
+            statusElement.textContent = message;
+            statusElement.className = "status " + type;
+            
+            setTimeout(() => {
+                statusElement.className = "status";
+                statusElement.textContent = "";
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
