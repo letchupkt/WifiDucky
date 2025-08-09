@@ -46,7 +46,7 @@ Watch WiFi Ducky in action:
 
 ### **Installation**
 #### **Step 1: Flash CircuitPython**
-1. Download the latest **CircuitPython** (v9.0.0 or higher recommended) from [Adafruit's site](https://circuitpython.org/board/raspberry_pi_pico_w/).
+1. Download the latest **CircuitPython** (v8.0.0) from [Adafruit's site](https://circuitpython.org/board/raspberry_pi_pico_w/).
 2. Hold the **BOOTSEL** button on your Pico W while plugging it into your PC via USB.
 3. The Pico will mount as a drive called **RPI-RP2**.
 4. Drag the downloaded **.uf2** file onto the RPI-RP2 drive. The Pico will reboot and appear as **CIRCUITPY**.
