@@ -1,6 +1,6 @@
 # WiFi Ducky 🚀
 
-![Raspberry Pi Pico W]((https://img.thingsboard.io/devices-library/raspberry-pi-pico-w.jpg))
+![Raspberry Pi Pico W](https://img.thingsboard.io/devices-library/raspberry-pi-pico-w.jpg)
 *Empowering hackers with wireless ducky magic – quack your way into systems!*
 
 ## **Project Overview** 🦆
