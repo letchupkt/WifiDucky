@@ -54,9 +54,9 @@ Watch WiFi Ducky in action:
 #### **Step 2: Install WiFi Ducky Files**
 1. Clone this repository:
    ```
-   git clone https://github.com/letchupkt/wifi-ducky.git
+   git clone https://github.com/letchupkt/WifiDucky.git
    ```
-   Or download the ZIP from the [releases page](https://github.com/letchupkt/wifi-ducky/releases).
+   Or download the ZIP from the [releases page](https://github.com/letchupkt/WifiDucky/releases).
 2. Navigate to the **Wifi Ducky** folder in the repo.
 3. Copy all files from the **Wifi Ducky** folder to the root of your **CIRCUITPY** drive.
 4. Safely eject the Pico – it's ready to quack!
