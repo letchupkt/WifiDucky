@@ -78,7 +78,7 @@ Watch WiFi Ducky in action:
 
 6️⃣ **Customize Settings**: Update SSID/password, restart WiFi, or factory reset via the Settings tab.
 
-![Web Interface Screenshot](https://github.com/user-attachments/assets/51c25369-f8c1-4a74-b633-7f8bf8a44b0e)
+![Web Interface Screenshot](/demo.png)
 
 ### **Advanced Tips**
 - **Payload Templates**: Quick-start with built-in examples like "Hello World" or "Admin Shell".
