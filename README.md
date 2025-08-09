@@ -1,6 +1,6 @@
 # WiFi Ducky 🚀
 
-![WiFi Ducky Banner]([https://via.placeholder.com/1200x400/000000/00ff00?text=WiFi+Ducky+-+Wireless+Keystroke+Injection](https://img.thingsboard.io/devices-library/raspberry-pi-pico-w.jpg))  
+![Raspberry Pi Pico W]([https://cdn.mos.cms.futurecdn.net/Xmn9ztSwKavDfzgX6x3g4g.jpg](https://img.thingsboard.io/devices-library/raspberry-pi-pico-w.jpg))
 *Empowering hackers with wireless ducky magic – quack your way into systems!*
 
 ## **Project Overview** 🦆
