@@ -1,0 +1,16 @@
+{
+    "version": "2.0",
+    "mode": "AP",
+    "ap_settings": {
+        "ssid": "WIFI DUCK",
+        "password": "password"
+    },
+    "client_settings": {
+        "ssid": "",
+        "password": ""
+    },
+    "stealth_mode": false,
+    "badusb_mode": false,
+    "badusb_script": "",
+    "default_delay": 0
+}

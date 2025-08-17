@@ -1,0 +1,12 @@
+# WiFi Ducky v2.0 Requirements
+# These libraries should be installed in the lib/ folder on your Pico W
+
+# Core HID functionality for Rubber Ducky
+adafruit_hid
+
+# HTTP server for web interface
+adafruit_httpserver
+
+# Note: These are CircuitPython libraries, not pip packages
+# Download from: https://circuitpython.org/libraries
+# Place in the lib/ folder on your Pico W

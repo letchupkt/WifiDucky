@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi Ducky</title>
+    <title>WiFi Ducky v2.0</title>
     <style>
         :root {
             --primary: #00ff00;
@@ -15,6 +15,7 @@
             --border: #003300;
             --warning: #ffaa00;
             --error: #ff0000;
+            --info: #0088ff;
         }
         
         body {
@@ -27,7 +28,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr;
@@ -127,6 +128,15 @@
             background: #cc0000;
         }
         
+        button.info {
+            background: var(--info);
+            color: white;
+        }
+        
+        button.info:hover {
+            background: #0066cc;
+        }
+        
         .btn-group {
             display: flex;
             gap: 10px;
@@ -222,6 +232,13 @@
             display: block;
         }
         
+        .status.info {
+            background: rgba(0, 136, 255, 0.1);
+            border: 1px solid var(--info);
+            color: var(--info);
+            display: block;
+        }
+        
         .form-group {
             margin: 15px 0;
         }
@@ -301,6 +318,66 @@
             display: block;
         }
         
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+        
+        .mode-selector label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .mode-selector label:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .mode-selector input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .mode-selector input[type="radio"]:checked + span {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .mode-settings {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+        
+        .mode-settings.active {
+            display: block;
+        }
+        
+        .stealth-toggle {
+            background: rgba(0, 136, 255, 0.1);
+            border: 1px solid var(--info);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .stealth-toggle h3 {
+            color: var(--info);
+            margin-top: 0;
+        }
+        
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
@@ -352,13 +429,17 @@
             .nav-buttons button {
                 flex: none;
             }
+            
+            .mode-selector {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>WiFi Ducky</h1>
+            <h1>WiFi Ducky v2.0</h1>
             
             <div class="connection-status">
                 <div id="connectionIndicator" class="status-indicator connected"></div>
@@ -416,25 +497,26 @@
                 <div id="deviceStatus">Loading...</div>
             </div>
             
-            <h3>WiFi Access Point Settings</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="newSSID">Network Name (SSID):</label>
-                    <input type="text" id="newSSID" maxlength="32" placeholder="Enter SSID">
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="newPassword">Password:</label>
-                    <input type="password" id="newPassword" maxlength="63" placeholder="Enter password (8-63 characters)">
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password:</label>
-                    <input type="password" id="confirmPassword" maxlength="63" placeholder="Confirm password">
-                </div>
-            </div>
+                         <h3>WiFi Settings</h3>
+             
+             <div class="info-panel">
+                 <strong>Client Mode:</strong> The device connects to an existing WiFi network. You must connect to the same network to access the web interface.
+             </div>
+             
+             <!-- WiFi Settings -->
+             <div class="form-row">
+                 <div class="form-group">
+                     <label for="clientSSID">Network Name (SSID):</label>
+                     <input type="text" id="clientSSID" maxlength="32" placeholder="Enter WiFi network name">
+                 </div>
+             </div>
+             
+             <div class="form-row">
+                 <div class="form-group">
+                     <label for="clientPassword">Network Password:</label>
+                     <input type="password" id="clientPassword" maxlength="63" placeholder="Enter WiFi password">
+                 </div>
+             </div>
             
             <div class="btn-group">
                 <button onclick="saveSettings()">Save Settings</button>
@@ -443,6 +525,8 @@
             
             <div id="settingsStatus" class="status"></div>
             
+            
+            
             <h3>Device Management</h3>
             
             <div class="btn-group">
@@ -450,9 +534,10 @@
                 <button class="danger" onclick="factoryReset()">Factory Reset</button>
             </div>
             
-            <div class="info-panel">
-                <strong>Note:</strong> After changing WiFi settings, you'll need to reconnect to the new network name with the new password.
-            </div>
+                         <div class="info-panel">
+                 <strong>Access:</strong> Use the device IP address shown above to access the web interface.<br>
+                 <strong>Note:</strong> After changing WiFi settings, you'll need to reconnect to the same network to access the device.
+             </div>
         </div>
         
         <!-- Reference Tab -->
@@ -492,6 +577,13 @@
                     <b>DEFAULT_DELAY X</b> - Sets default delay between commands.
                 </div>
             </div>
+            
+                         <h3>Features</h3>
+             <div class="info-panel">
+                 <strong>Client Mode:</strong> Connect to existing WiFi networks<br>
+                 <strong>Direct Access:</strong> Access via device IP address<br>
+                 <strong>Rubber Ducky:</strong> Execute scripts via web interface
+             </div>
         </div>
     </div>
     
@@ -510,7 +602,8 @@
         let connectionCheckInterval;
         let executionAttempts = 0;
         const MAX_ATTEMPTS = 5;
-        let currentTab = 'payload';
+                 let currentTab = 'payload';
+         let currentMode = 'CLIENT';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -531,6 +624,8 @@
                 toggleBadUSBMode();
             });
             
+            
+            
             // Load current settings
             loadCurrentSettings();
             updateDeviceStatus();
@@ -540,6 +635,8 @@
                 startConnectionCheck();
             }
         });
+
+        
 
         function switchTab(tab) {
             // Hide all tabs
@@ -565,34 +662,37 @@
             }
         }
 
-        function loadCurrentSettings() {
-            fetch(`${DEVICE_IP}/config/`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === 'success') {
-                        document.getElementById('newSSID').value = data.config.ssid;
-                        // Don't load the masked password, keep field empty for security
-                        document.getElementById('newPassword').value = '';
-                        document.getElementById('confirmPassword').value = '';
-                        showSettingsStatus('Settings loaded successfully', 'success');
-                    } else {
-                        throw new Error(data.message || 'Unknown error from server');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading settings:', error);
-                    showSettingsStatus(`Error loading settings: ${error.message}`, 'error');
-                    // Set fallback values
-                    document.getElementById('newSSID').value = 'WIFI DUCK';
-                    document.getElementById('newPassword').value = '';
-                    document.getElementById('confirmPassword').value = '';
-                });
-        }
+                 function loadCurrentSettings() {
+             fetch(`${DEVICE_IP}/config/`)
+                 .then(response => {
+                     if (!response.ok) {
+                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                     }
+                     return response.json();
+                 })
+                 .then(data => {
+                     if (data.status === 'success') {
+                         const config = data.config;
+                         
+                         // Update client settings
+                         document.getElementById('clientSSID').value = config.client_ssid || '';
+                         document.getElementById('clientPassword').value = '';
+                         
+                         showSettingsStatus('Settings loaded successfully', 'success');
+                     } else {
+                         throw new Error(data.message || 'Unknown error from server');
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error loading settings:', error);
+                     showSettingsStatus(`Error loading settings: ${error.message}`, 'error');
+                     // Set fallback values
+                     document.getElementById('clientSSID').value = '';
+                     document.getElementById('clientPassword').value = '';
+                 });
+         }
+
+        
 
         function updateDeviceStatus() {
             fetch(`${DEVICE_IP}/status/`)
@@ -606,12 +706,14 @@
                     if (data.status === 'online' || data.status === 'success') {
                         const uptime = Math.floor((data.uptime || 0) / 60);
                         const status = `
+                            Mode: ${data.current_mode || 'Unknown'}<br>
                             SSID: ${data.current_ssid || 'Unknown'}<br>
                             Uptime: ${uptime} minutes<br>
                             Executions: ${data.executions || 0}<br>
                             WiFi Status: ${data.wifi_status || 'Unknown'}<br>
                             IP Address: ${data.ip_address || 'Unknown'}<br>
-                            Free Memory: ${data.free_memory ? Math.floor(data.free_memory / 1024) + ' KB' : 'Unknown'}
+                            Free Memory: ${data.free_memory ? Math.floor(data.free_memory / 1024) + ' KB' : 'Unknown'}<br>
+                            Stealth Mode: ${data.stealth_mode ? 'Enabled' : 'Disabled'}
                         `;
                         document.getElementById('deviceStatus').innerHTML = status;
                     } else {
@@ -627,42 +729,26 @@
                 });
         }
 
-        function saveSettings() {
-            const ssid = document.getElementById('newSSID').value.trim();
-            const password = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Validation
-            if (!ssid) {
-                showSettingsStatus('SSID cannot be empty', 'error');
-                return;
-            }
-            
-            if (ssid.length > 32) {
-                showSettingsStatus('SSID cannot be longer than 32 characters', 'error');
-                return;
-            }
-            
-            if (!password) {
-                showSettingsStatus('Password cannot be empty', 'error');
-                return;
-            }
-            
-            if (password.length < 8 || password.length > 63) {
-                showSettingsStatus('Password must be 8-63 characters long', 'error');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showSettingsStatus('Passwords do not match', 'error');
-                return;
-            }
-            
-            // Save settings
-            const config = {
-                ssid: ssid,
-                password: password
-            };
+                 function saveSettings() {
+             // Validate client settings
+             const clientSSID = document.getElementById('clientSSID').value.trim();
+             const clientPassword = document.getElementById('clientPassword').value;
+             
+             if (!clientSSID) {
+                 showSettingsStatus('Client SSID cannot be empty', 'error');
+                 return;
+             }
+             
+             if (!clientPassword) {
+                 showSettingsStatus('Client password cannot be empty', 'error');
+                 return;
+             }
+             
+             // Prepare config object
+             const config = {
+                 client_ssid: clientSSID,
+                 client_password: clientPassword
+             };
             
             showSettingsStatus('Saving settings...', 'warning');
             
@@ -690,6 +776,7 @@
                     // Clear password fields for security
                     document.getElementById('newPassword').value = '';
                     document.getElementById('confirmPassword').value = '';
+                    document.getElementById('clientPassword').value = '';
                     
                     // Update device status
                     setTimeout(updateDeviceStatus, 1000);
@@ -704,7 +791,7 @@
         }
 
         function restartWiFi() {
-            if (!confirm('Restart WiFi? You will need to reconnect to the new network if you changed the SSID.')) {
+            if (!confirm('Restart WiFi? You will need to reconnect to the appropriate network.')) {
                 return;
             }
             
@@ -724,11 +811,15 @@
             })
             .then(data => {
                 if (data.status === 'success') {
-                    showSettingsStatus(`WiFi restarted successfully! New SSID: ${data.new_ssid}`, 'success');
+                    showSettingsStatus(`WiFi restarted successfully! New Mode: ${data.new_mode}`, 'success');
                     
                     // Show reconnection message
                     setTimeout(() => {
-                        showSettingsStatus(`Please reconnect to "${data.new_ssid}" if the network name changed.`, 'warning');
+                        if (data.new_mode === 'CLIENT') {
+                            showSettingsStatus('Please connect to the same WiFi network to access the web interface.', 'info');
+                        } else {
+                            showSettingsStatus(`Please reconnect to "${data.new_ip}" if the network changed.`, 'warning');
+                        }
                     }, 3000);
                     
                     updateDeviceStatus();
@@ -769,12 +860,13 @@
                 if (data.status === 'success') {
                     showSettingsStatus('Factory reset completed! Device has been reset to defaults.', 'success');
                     
-                    // Update form with reset values
-                    if (data.config) {
-                        document.getElementById('newSSID').value = data.config.ssid;
-                    }
-                    document.getElementById('newPassword').value = '';
-                    document.getElementById('confirmPassword').value = '';
+                                         // Update form with reset values
+                     if (data.config) {
+                         document.getElementById('clientSSID').value = data.config.client_ssid;
+                     }
+                     
+                     // Clear password fields
+                     document.getElementById('clientPassword').value = '';
                     
                     updateDeviceStatus();
                 } else {
