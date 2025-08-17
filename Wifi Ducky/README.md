@@ -16,19 +16,8 @@ A powerful WiFi-enabled Rubber Ducky device built with Raspberry Pi Pico W, feat
 - Devices connect directly to the Pico W
 - Access web interface at the device's IP address
 
-#### 2. Client Mode
-- Connects to existing WiFi networks
-- Useful for remote access and stealth operations
-- Web interface accessible from the same network
-
-### Stealth Features
-- **Storage Hiding**: Toggle to hide device storage from connected computers
-- **USB Drive Concealment**: Device appears as HID keyboard only
-- **Silent Operation**: All functions work without visible storage
-
 ### Network Access
 - **Direct IP Access**: Connect via device IP address
-- **Secure Web Interface**: Password-protected access point
 
 ## 🔧 Hardware Requirements
 
@@ -54,7 +43,6 @@ adafruit_httpserver
 3. **Connect via USB** or power via USB-C
 4. **Connect to WiFi**:
    - **AP Mode**: Connect to "WIFI DUCK" network (password: "password")
-   - **Client Mode**: Device connects to specified network
 5. **Access Web Interface**:
    - Direct IP: `http://[device-ip]`
 
@@ -67,9 +55,7 @@ adafruit_httpserver
 - Template library for common tasks
 
 ### Settings Tab
-- Switch between AP and Client modes
 - Configure WiFi credentials
-- Toggle stealth mode
 - Device management (restart, factory reset)
 
 ### Reference Tab
@@ -113,31 +99,12 @@ CTRL SHIFT ESC
 
 ## ⚙️ Configuration
 
-### Mode Switching
-1. Go to **Settings** tab
-2. Select desired mode (AP or Client)
-3. Enter network credentials
-4. Click **Save Settings**
-5. Click **Restart WiFi** to apply changes
-
-### Stealth Mode
-1. Go to **Settings** tab
-2. Toggle **Stealth Mode** switch
-3. Storage will be hidden from connected computers
-4. All functions remain operational
-
 ### BadUSB Mode
 1. Go to **Payload Editor** tab
 2. Write your script
 3. Toggle **BadUSB Mode**
 4. Script auto-executes when device connects
 
-## 🔒 Security Features
-
-- **Password Protection**: Default AP password can be changed
-- **Stealth Operation**: Hide device identity
-- **Secure Web Interface**: HTTPS-ready implementation
-- **Access Control**: Configurable network access
 
 ## 🌐 Network Modes
 
@@ -145,11 +112,6 @@ CTRL SHIFT ESC
 - **Use Case**: Direct device access, field operations
 - **Pros**: No external network required, immediate access
 - **Cons**: Limited range, manual connection required
-
-### Client Mode
-- **Use Case**: Remote access, network integration
-- **Pros**: Extended range, network integration
-- **Cons**: Requires existing network, network dependency
 
 ## 🛠️ Troubleshooting
 
@@ -202,10 +164,6 @@ CTRL SHIFT ESC
 - Remote access capabilities
 - Network monitoring and management
 
-### Stealth Operations
-- Concealed device operation
-- Hidden storage access
-- Silent payload execution
 
 ## 🤝 Contributing
 
@@ -219,13 +177,7 @@ This project is open source. Please respect responsible disclosure practices.
 
 This tool is for educational and authorized testing purposes only. Users are responsible for ensuring compliance with applicable laws and regulations.
 
-## 📞 Support
-
-For support and questions:
-- GitHub Issues: [Project Repository]
-- Documentation: See inline code comments
-- Community: Check project discussions
-
 ---
 
 **WiFi Ducky v2.0** - Power meets stealth in the palm of your hand.
+
